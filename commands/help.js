@@ -11,7 +11,7 @@ module.exports = {
             .addFields(
                 {
                     name: 'Général (4)',
-                    value: '`bot-info`, `help`, `merci`, `server-info`, `user-info`'
+                    value: '`bot-info`, `help`, `server-info`, `user-info`'
                 },
                 {
                     name: 'Staff (3)',
