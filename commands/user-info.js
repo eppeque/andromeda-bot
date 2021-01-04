@@ -51,10 +51,17 @@ module.exports = {
                     value: `${days[dayIndex]} ${createdAt.getDate()} ${months[monthIndex]} ${createdAt.getFullYear()}`,
                     inline: true,
                 },
+            )
+            .addFields(
                 {
                     name: 'A rejoint le serveur le',
                     value: `${days[joinedAt.getDay()]} ${joinedAt.getDate()} ${months[joinedAt.getMonth()]} ${joinedAt.getFullYear()}`,
-                    inline: false,
+                    inline: true,
+                },
+                {
+                    name: 'Nombre de rôles',
+                    value: message.guild.member(author).roles.cache.size - 1,
+                    inline: true,
                 },
             )
             .setColor('#4885ed');
