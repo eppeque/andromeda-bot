@@ -3,8 +3,8 @@ module.exports = {
     description: 'Delete all the messages in a channel',
     execute(message) {
         if (message.member.hasPermission('ADMINISTRATOR')) {
-            message.channel.messages.fetch().then((results) => {
-                message.channel.bulkDelete(results);
+            message.channel.messages.fetch().then(messages => {
+                message.channel.bulkDelete(messages, true);
             });
         }
     }

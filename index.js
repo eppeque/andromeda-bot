@@ -16,6 +16,22 @@ client.once('ready', () => {
     console.log('The bot is connected');
 });
 
+client.on('guildMemberAdd', member => {
+    const channel = member.guild.channels.cache.find(ch => ch.name === 'joins');
+    const user = member.user;
+
+    if (!channel) return;
+
+    const embed = new Discord.MessageEmbed()
+        .setTitle("Arrivée d'un nouveau membre !")
+        .setDescription(`Dites bonjour à **${user.tag}** qui est arrivé sur le serveur !`)
+        .setFooter("Cayde-6 - Clan Androméda")
+        .setThumbnail(user.displayAvatarURL())
+        .setColor('#4885ed');
+
+    channel.send(embed);
+});
+
 client.on('message', message => {
     const messageContent = message.content.toLowerCase();
 
@@ -36,10 +52,12 @@ client.on('message', message => {
         client.commands.get('status').execute(message, client);
     } else if (command === 'help') {
         client.commands.get('help').execute(message);
-    } else if (command === 'bot-info') {
+    } else if (command === 'bot-info' || command === 'bi') {
         client.commands.get('bot-info').execute(message);
-    } else if (command === 'user-info') {
+    } else if (command === 'user-info' || command === 'ui') {
         client.commands.get('user-info').execute(message);
+    } else if (command === 'server-info' || command === 'si') {
+        client.commands.get('server-info').execute(message, client);
     }
 });
 

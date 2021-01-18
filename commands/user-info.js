@@ -64,6 +64,7 @@ module.exports = {
                     inline: true,
                 },
             )
+            .setFooter('Cayde-6 - Clan Androméda')
             .setColor('#4885ed');
 
         message.channel.send(embed);
