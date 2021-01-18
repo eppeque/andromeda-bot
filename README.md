@@ -1,3 +1,3 @@
 # Andromeda bot
 
-A Discord bot for the Andromeda Discord server
+The Discord bot of the Andromeda Discord server

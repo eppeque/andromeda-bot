@@ -1,7 +1,7 @@
 {
   "name": "andromeda-bot",
   "version": "1.0.0",
-  "description": "A Discord bot for the Andromeda Discord server",
+  "description": "The Discord bot of the Andromeda Discord server",
   "main": "index.js",
   "scripts": {
     "start": "nodemon index.js",

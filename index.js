@@ -1,19 +1,164 @@
 const Discord = require('discord.js');
-const fs = require('fs');
-const token = require('./token');
-
 const client = new Discord.Client();
-client.commands = new Discord.Collection();
 
-const commandFiles = fs.readdirSync('./commands/').filter(file => file.endsWith('.js'));
-
-for (const file of commandFiles) {
-    const command = require(`./commands/${file}`);
-    client.commands.set(command.name, command);
-}
+const config = require('./config.json');
+const command = require('./command');
 
 client.once('ready', () => {
-    console.log('The bot is connected');
+    console.log('The bot is connected!');
+
+    command(client, ['ping', 'test'], (message) => {
+        message.channel.send('Pong!');
+    });
+
+    command(client, ['help', 'h'], (message) => {
+        const embed = new Discord.MessageEmbed()
+            .attachFiles(['./help.png'])
+            .setAuthor("Menu d'aide", 'attachment://help.png')
+            .setDescription('Bonjour, voici la documentation de Cayde-6.')
+            .addFields(
+                {
+                    name: 'Général (4)',
+                    value: '`bot-info`, `help`, `server-info`, `user-info`'
+                },
+                {
+                    name: 'Staff (3)',
+                    value: '`clear`, `status`, `warn`',
+                }
+            )
+            .setColor('#4885ed')
+            .setFooter('Cayde-6 - Clan Androméda', 'https://cdn.discordapp.com/avatars/748429269415493722/8efde9546924fc32cfae679d737235ce.png?size=256');
+
+        message.channel.send(embed);
+    });
+    
+    command(client, ['clear'], (message) => {
+        if (message.member.hasPermission('ADMINISTRATOR')) {
+            message.channel.messages.fetch().then(messages => {
+                message.channel.bulkDelete(messages, true);
+            });
+        }
+    });
+
+    command(client, ['status'], (message) => {
+        if (message.member.hasPermission('ADMINISTRATOR')) {
+            const content = message.content.replace('!status ', '');
+
+            client.user.setPresence({
+                activity: {
+                    name: content,
+                    type: 0,
+                },
+            });
+
+            message.channel.send('Statut changé avec succès !');
+        }
+    });
+
+    command(client, ['bot-info', 'bi'], (message) => {
+        const embed = new Discord.MessageEmbed()
+            .setAuthor('Cayde-6', 'https://cdn.discordapp.com/avatars/748429269415493722/8efde9546924fc32cfae679d737235ce.png?size=256')
+            .addFields(
+                {
+                    name: 'Informations générales',
+                    value: '**Développeurs** : `Eppeque#4928`, `OuiCKirb76#8666`\nCréé le `27/08/2020`, le bot tourne actuellement sur la version `1.0.0`',
+                },
+                {
+                    name: 'Autres renseignements',
+                    value: '**Machine** : `linux` - `(x64)`\n**Version discord.js** : `12.5.1`',
+                },
+            )
+            .setColor('#4885ed')
+            .setFooter('Page Github : https://github.com/eppeque/andromeda-bot');
+        message.channel.send(embed);
+    });
+
+    command(client, ['user-info', 'ui'], (message) => {
+        const author = message.author;
+        const createdAt = author.createdAt;
+        const joinedAt = message.member.joinedAt;
+        const embed = new Discord.MessageEmbed()
+            .setAuthor(`Profil de ${author.username}`, author.avatarURL())
+            .setThumbnail(author.avatarURL())
+            .addFields(
+                {
+                    name: 'Nom',
+                    value: author.tag,
+                    inline: true,
+                },
+                {
+                    name: 'ID',
+                    value: author.id,
+                    inline: true,
+                },
+                {
+                    name: 'Compte créé le',
+                    value: `${config.days[createdAt.getDay()]} ${createdAt.getDate()} ${config.months[createdAt.getMonth()]} ${createdAt.getFullYear()}`,
+                    inline: true,
+                },
+            )
+            .addFields(
+                {
+                    name: 'A rejoint le serveur le',
+                    value: `${config.days[joinedAt.getDay()]} ${joinedAt.getDate()} ${config.months[joinedAt.getMonth()]} ${joinedAt.getFullYear()}`,
+                    inline: true,
+                },
+                {
+                    name: 'Nombre de rôles',
+                    value: message.guild.member(author).roles.cache.size - 1,
+                    inline: true,
+                },
+            )
+            .setFooter('Cayde-6 - Clan Androméda')
+            .setColor('#4885ed');
+
+        message.channel.send(embed);
+    });
+
+    command(client, ['server-info', 'si'], (message) => {
+        const createdAt = message.guild.createdAt;
+
+        const embed = new Discord.MessageEmbed()
+            .setAuthor('Cayde-6', 'https://cdn.discordapp.com/avatars/748429269415493722/8efde9546924fc32cfae679d737235ce.png?size=256')
+            .addFields(
+                {
+                    name: 'Propriétaire',
+                    value: 'Eppeque#4928',
+                    inline: true,
+                },
+                {
+                    name: 'ID du serveur',
+                    value: message.guild.id,
+                    inline: true,
+                },
+                {
+                    name: 'Membres',
+                    value: message.guild.memberCount - 3, // 3 is the number of bots on the server. They aren't included in the count
+                    inline: true,
+                },
+            )
+            .addFields(
+                {
+                    name: 'Date de création du serveur',
+                    value: `${config.days[createdAt.getDay()]} ${createdAt.getDate()} ${config.months[createdAt.getMonth()]} ${createdAt.getFullYear()}\n${createdAt.getHours()}:${createdAt.getMinutes()}`,
+                    inline: true,
+                },
+                {
+                    name: 'Salons',
+                    value: `${client.channels.cache.size} salons`,
+                    inline: true,
+                },
+                {
+                    name: `Rôles (${message.guild.roles.cache.size})`,
+                    value: message.guild.roles.cache.map(role => role),
+                    inline: false,
+                },
+            )
+            .setFooter('Cayde-6 - Clan Androméda')
+            .setColor('#4885ed');
+
+        message.channel.send(embed);
+    });
 });
 
 client.on('guildMemberAdd', member => {
@@ -32,33 +177,4 @@ client.on('guildMemberAdd', member => {
     channel.send(embed);
 });
 
-client.on('message', message => {
-    const messageContent = message.content.toLowerCase();
-
-    if (message.mentions.has(client.user)) {
-        client.commands.get('hello').execute(message);
-    }
-
-    const prefix = '!';
-
-    if (!messageContent.startsWith(prefix) || message.author.bot) return;
-
-    const args = messageContent.slice(prefix.length).split(/ +/);
-    const command = args.shift();
-
-    if (command === 'clear') {
-        client.commands.get('clear').execute(message);
-    } else if (command === 'status') {
-        client.commands.get('status').execute(message, client);
-    } else if (command === 'help') {
-        client.commands.get('help').execute(message);
-    } else if (command === 'bot-info' || command === 'bi') {
-        client.commands.get('bot-info').execute(message);
-    } else if (command === 'user-info' || command === 'ui') {
-        client.commands.get('user-info').execute(message);
-    } else if (command === 'server-info' || command === 'si') {
-        client.commands.get('server-info').execute(message, client);
-    }
-});
-
-client.login(token);
+client.login(config.token);
