@@ -27,7 +27,7 @@ client.once('ready', () => {
                 }
             )
             .setColor('#4885ed')
-            .setFooter('Cayde-6 - Clan Androméda', 'https://cdn.discordapp.com/avatars/748429269415493722/8efde9546924fc32cfae679d737235ce.png?size=256');
+            .setFooter('Cayde-6 - Clan Androméda', client.user.displayAvatarURL());
 
         message.channel.send(embed);
     });
@@ -57,7 +57,7 @@ client.once('ready', () => {
 
     command(client, ['bot-info', 'bi'], (message) => {
         const embed = new Discord.MessageEmbed()
-            .setAuthor('Cayde-6', 'https://cdn.discordapp.com/avatars/748429269415493722/8efde9546924fc32cfae679d737235ce.png?size=256')
+            .setAuthor('Cayde-6', client.user.displayAvatarURL())
             .addFields(
                 {
                     name: 'Informations générales',
@@ -162,7 +162,7 @@ client.once('ready', () => {
 });
 
 client.on('guildMemberAdd', member => {
-    const channel = member.guild.channels.cache.find(ch => ch.name === 'joins');
+    const channel = member.guild.channels.cache.find(ch => ch.id === '795703040769523732');
     const user = member.user;
 
     if (!channel) return;
