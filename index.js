@@ -23,7 +23,7 @@ client.once('ready', () => {
                 },
                 {
                     name: 'Staff (5)',
-                    value: '`approved-suggestion`, `clear`, `status`, `voted-suggestion`, `warn`',
+                    value: '`approved-suggestion`, `clear`, `status`, `voted-suggestion`',
                 }
             )
             .setColor('#4885ed')
