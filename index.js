@@ -160,55 +160,25 @@ client.once('ready', () => {
         message.channel.send(embed);
     });
 
-    command(client, ['set-suggestion'], (message) => {
-        if (message.channel.id != '782731496124579860') {
-            message.channel.send('Exécute cette commande dans le salon dédié aux suggestions !');
-        } else {
-            const suggestion = message.content.replace('!set-suggestion', '');
+    command(client, ['suggestion'], (message) => {
+        const channel = message.guild.channels.cache.find(c => c.id === '819157066610114590');
+        
+        const messageArg = message.content.replace('!suggestion ', '');
 
-            if (suggestion === '') {
-                return message.channel.send('Pourrais-tu me dire ta suggestion ?!');
-            }
-
-            const embed = new Discord.MessageEmbed()
-                .setAuthor(`Suggestion de ${message.author.tag}`, message.author.displayAvatarURL())
-                .setDescription(suggestion)
-                .setTimestamp()
-                .setColor('#4885ed');
-                        
-            message.channel.send(embed).then(m => {
-                m.react("✅");
-                m.react("❌");
-            });
-            message.delete();
-        }
-    });
-
-    command(client, ['voted-suggestion'], (message) => {
-        if (message.member.hasPermission('ADMININSTRATOR')) {
-            const user = message.mentions.users.first();
-            const channel = message.guild.channels.cache.find(ch => ch.id === '782731496124579860');
-            channel.send(
-                `<@${user.id}>, le peuple a approuvé ton idée. C'est désormais au Staff de décider si ton idée sera prise en compte pour l'amélioration de ce serveur. Merci pour ton investissement en tous cas !`
-            );
-            message.delete();
-        }
-    });
-
-    command(client, ['approved-suggestion'], (message) => {
-        if (message.member.hasPermission('ADMINISTRATOR')) {
-            const user = message.mentions.users.first();
-            const channel = message.guild.channels.cache.find(ch => ch.id === '782731496124579860');
-            channel.send(
-                `<@${user.id}>, Félicitations ! Le Staff a approuvé ton idée. Ce n'est désormais qu'une question de temps avant de voir ta suggestion appliquée au serveur !`
-            );
-            message.delete();
-        }
+        const embed = new Discord.MessageEmbed()
+            .setColor('#4885ed')
+            .setAuthor(message.author.tag, message.author.displayAvatarURL({dynamic: true}))
+            .setDescription(messageArg);
+        channel.send(embed).then(message => {
+            message.react('👍');
+            message.react('👎');
+        });
+        message.delete();
     });
 });
 
 client.on('guildMemberAdd', member => {
-    const channel = member.guild.channels.cache.find(ch => ch.id === '795703040769523732');
+    const channel = member.guild.channels.cache.find(ch => ch.id === '819171972709482516');
     const user = member.user;
 
     if (!channel) return;
